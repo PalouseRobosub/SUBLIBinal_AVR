@@ -14,17 +14,21 @@ UART_Data u1;
 
 Error initialize_UART(UART_Config config)
 {
-
+	UCSR0A |= 1<<U2X0; //double speed
+	//This helps to eliminate % error at higher UART speeds. 
+	//Without this, speeds like 115.2k are not intelligible due to large error
 	//set the baud rate
-	UBRR0 = config.pb_clk/(16*config.speed) - 1;
+	UBRR0 = config.pb_clk/(8*config.speed) - 1;
 			
 	if (config.rx_en) //enable rx interrupt and receiver
 	{
 		UCSR0B |= (1 << RXCIE0) | (1 << RXEN0); 
+		uart_1_rx_callback = config.rx_callback;
 	}
 	if(config.tx_en) //enable tx interupt and transmitter
 	{
 		UCSR0B |= (1 << UDRIE0) | (1 << TXEN0);
+		uart_1_tx_callback = config.tx_callback;
 	}
 			
 	UCSR0C |= (1 << UCSZ01) | (1 << UCSZ00); //8 bit operation
@@ -82,8 +86,6 @@ ISR(USART_UDRE_vect)
 		uart_1_tx_callback(); //call additional ISR functionality
 	}
 	
-	//now clear the interrupt flag
-	UCSR0A &= ~(1 << UDRE0);
 }
 
 //Rx ISR
@@ -99,6 +101,4 @@ ISR(USART_RX_vect)
 		uart_1_rx_callback(); //call additional ISR functionality
 	}
 
-	//now clear the interrupt flag
-	UCSR0A &= ~(1 << RXC0);
 }

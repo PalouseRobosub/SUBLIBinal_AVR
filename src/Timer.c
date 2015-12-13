@@ -55,9 +55,12 @@ Error initialize_timer(Timer_Config config) {
 			TCCR0B &= ~(1 << WGM02);
 			TCCR0A |= (1 << WGM01);
 			TCCR0A &= ~(1 << WGM00);
-			
-			//setup interrupts
-			TIMSK0 = (1 << OCIE0A);
+
+			if (config.callback != NULL) {			
+				//setup interrupts
+				TIMSK0 = (1 << OCIE0A);
+				timer_0_callback = config.callback;
+			}
 			
 			break;
 		case TIMER_1:
@@ -78,10 +81,8 @@ Error initialize_timer(Timer_Config config) {
 
 ISR(TIMER0_COMPA_vect)
 {
-	if (timer_1_callback != NULL) 
+	if (timer_0_callback != NULL) 
 	{
-		timer_1_callback();
+		timer_0_callback();
 	}
-
-	TIFR0 |= (1 << OCF0A); //clear the interrupt flag
 }
