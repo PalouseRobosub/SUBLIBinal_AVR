@@ -26,7 +26,7 @@
 extern "C" {
 #endif
 
-//#include "ADC.h"
+#include "ADC.h"
 #include "ExtInterrupts.h"
 //#include "I2C.h"
 #include "Queue.h"
