@@ -30,7 +30,7 @@ extern "C" {
     typedef struct ADC_DATA {
         Queue Results_queue;///< Queue of resulting ADC reads
         Queue Work_queue;///< Queued ADC reads to be done
-        boolean is_idle;///< Idle information
+        Boolean is_idle;///< Idle information
     }ADC_Data; ///< Object for references to the data queues
 
 

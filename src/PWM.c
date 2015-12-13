@@ -39,14 +39,14 @@
 				break;
 			case PWM_CH_2:
 				//Configure Pin PB2
-				DRRB |= 1<<2;
+				DDRB |= 1<<2;
 
 				//enable PWM on the timer in configuration
 				TCCR1A |= 0b11;
 				TCCR1A |= 1<<COM1B1;
 				TCCR1A &= ~(1<<COM1B0);
 				TCCR1B |= 0b11<<3; //enable PWM fast mode, top at OCR1A
-				OCR1B = config.DutyCycle*OCR1A;
+				OCR1B = config.dutyCycle*OCR1A;
 				break;
 			case PWM_CH_3:
 				//Configure PD3
@@ -56,7 +56,7 @@
 				TCCR2A |= 1<<COM2B1;
 				TCCR2A &= ~(1<<COM2B0); //Set mode to PWM fast, non inverted
 				TCCR2A |= 0b11;
-				TCCR2B |= 1<<WMG22; //PWM mode, fast, top at OCR2A
+				TCCR2B |= 1<<WGM22; //PWM mode, fast, top at OCR2A
 				OCR2B = config.dutyCycle*OCR2A; //set the duty cycle
 				break;
 		}
@@ -68,7 +68,7 @@
             case PWM_CH_1:
                 TCCR0A |= 1<<WGM01;
 				TCCR0A |= 1<<WGM00;
-				TCCR0B |= 1<<WMG02;
+				TCCR0B |= 1<<WGM02;
                 break;
             case PWM_CH_2:
                 TCCR1A |= 1<<WGM10;
@@ -89,7 +89,7 @@
             case PWM_CH_1:
                 TCCR0A &= ~(1<<WGM01);
 				TCCR0A &= ~(1<<WGM00);
-				TCCR0B &= ~(1<<WMG02);
+				TCCR0B &= ~(1<<WGM02);
                 break;
             case PWM_CH_2:
                 TCCR1A &= ~(1<<WGM10);

@@ -29,7 +29,7 @@ Error enqueue(Queue *queue, uint8_t *data, uint16_t data_size)
 	{
 		if((queue->buffer_size - queue->num_stored) < data_size)
 		{
-			return_code = ERR_QUEUE_INSUF_ROOM;
+				return_code = ERR_QUEUE_FULL;
 		}
 		else
 		{
@@ -58,7 +58,7 @@ Error dequeue(Queue *queue, uint8_t *output_data, uint16_t data_size)
 	{
 		if(data_size > queue->num_stored)
 		{
-			return_code = ERR_QUEUE_INSUF_DATA;
+			return_code = ERR_QUEUE_INVALID_READ;
 		}
 		else
 		{

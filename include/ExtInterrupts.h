@@ -11,14 +11,16 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-    #include "System.h"
+    
+#include "Arduino.h"
+#include "System.h"
 
     typedef enum {
-        INT0,
-        INT1,
-        PCINT0,
-        PCINT1,
-        PCINT2
+        INT_0,
+        INT_1,
+        PCINT_0,
+        PCINT_1,
+        PCINT_2
     }Interrupt;
 
     

@@ -1,5 +1,4 @@
 #include "ExtInterrupts.h"
-#include "System.h"
 //Copyright 2015 Palouse RoboSub Club
 
 /*
@@ -35,11 +34,11 @@ void initialize_Interrupt(Interrupt_Config config)
     switch (config.extInt) {
     //set the tristate and the PPS
     //disable analog on this pin
-        case INT0:
+        case INT_0:
 			
 			DDRD &= ~(1<<2); //set PD2 as an input on the tristatei
 			//set up the resistor
-			if (config.pullup == pullup)
+			if (config.resistor == pullup)
 			{
 				PORTD |= (1<<2); //enable the pullup resistor	
 			} 
@@ -68,11 +67,11 @@ void initialize_Interrupt(Interrupt_Config config)
 
             callback_int0 = config.callback;//set the callback
             break;
-        case INT1:
+        case INT_1:
             
 			DDRD &= ~(1<<3); //set PD2 as an input on the tristatei
 			//set up the resistor
-			if (config.pullup == pullup)
+			if (config.resistor == pullup)
 			{
 				PORTD |= (1<<3); //enable the pullup resistor	
 			} 
@@ -101,20 +100,20 @@ void initialize_Interrupt(Interrupt_Config config)
 
             callback_int1 = config.callback;//set the callback
             break;
-        case PCINT0:
+        case PCINT_0:
 			PCICR |= config.enable;
 		   //enable all associated pins 
-			PCMSK0 = pins;	
+			PCMSK0 = config.pins;	
 			callback_pcint0 = config.callback;
             break;
-        case PCINT1:
+        case PCINT_1:
 			PCICR |= config.enable << 1;
-			PCMSK1 = pins;
+			PCMSK1 = config.pins;
 			callback_pcint1 = config.callback;
             break;
-        case PCINT2:
+        case PCINT_2:
 			PCICR |= config.enable << 2;
-			PCMSK2 = pins;
+			PCMSK2 = config.pins;
 			callback_pcint2 = config.callback;
             break;
         default:
@@ -127,19 +126,19 @@ void initialize_Interrupt(Interrupt_Config config)
 void disable_Interrupt(Interrupt extInt) {
     //clear the bit
     switch (extInt) {
-        case INT0:
+        case INT_0:
             EIMSK &= ~(1<<0);
             break;
-        case INT1:
+        case INT_1:
             EIMSK &= ~(1<<1);
 			break;
-        case PCINT0:
+        case PCINT_0:
             PCICR &= ~(1<<0);
             break;
-        case PCINT1:
+        case PCINT_1:
             PCICR &= ~(1<<1);
             break;
-        case PCINT2:
+        case PCINT_2:
             PCICR &= ~(1<<2);
             break;
         default:
@@ -150,19 +149,19 @@ void disable_Interrupt(Interrupt extInt) {
 void enable_Interrupt(Interrupt extInt) {
     //set the bit
 	switch (extInt) {
-        case INT0:
+        case INT_0:
             EIMSK |= (1<<0);
             break;
-        case INT1:
+        case INT_1:
             EIMSK |= (1<<1);
 			break;
-        case PCINT0:
+        case PCINT_0:
             PCICR |= (1<<0);
             break;
-        case PCINT1:
+        case PCINT_1:
             PCICR |= (1<<1);
             break;
-        case PCINT2:
+        case PCINT_2:
             PCICR |= (1<<2);
             break;
         default:

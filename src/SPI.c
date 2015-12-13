@@ -56,7 +56,7 @@ SPI_Data* initialize_SPI(SPI_Config config) {
     spi_1_rx_callback = config.rx_callback;
 
 	//Set up the clock based on the clock divider
-	SPCR = (SPRC)&~(0b11) | (config.divider&(~0b11));
+	SPCR = (SPCR)&~(0b11) | (config.divider&(~0b11));
 	if (config.divider >= 0b100)
 		SPSR |= 1; //Set the 2x bit
 
@@ -82,14 +82,14 @@ SPI_Data* initialize_SPI(SPI_Config config) {
     return &spi_1;
 }
 
-Error send_SPI(SPI_Channel channel, uint8 *data_ptr, uint data_size) {
+Error send_SPI(uint8 *data_ptr, uint data_size) {
     Error status;
 	uint8 transmission;
     //we need to place the provided data onto the Tx queue
-    status = enqueue(spi_1.Rx_queue, data_ptr, data_size);
+    status = enqueue(&spi_1.Rx_queue, data_ptr, data_size);
 	if (status == ERR_NO_ERR && spi_1.is_idle == TRUE)
 	{
-		status = dequeue(spi_1.Tx_queue, &transmission, sizeof(transmission));
+		status = dequeue(&spi_1.Tx_queue, &transmission, sizeof(transmission));
 		if (status == ERR_NO_ERR)
 			SPDR = transmission;
 		spi_1.is_idle = FALSE;
@@ -119,7 +119,7 @@ ISR(SPI_STC_vect) {
 	uint8 transmit;
 
 	//check for more data in the queue
-	if (dequeue(spi_1.Tx_queue, &transmit, sizeof(transmit)) == ERR_NO_ERR)
+	if (dequeue(&spi_1.Tx_queue, &transmit, sizeof(transmit)) == ERR_NO_ERR)
 		//if data is available, load it into the buffer
 		SPDR = transmit;
 	//if no data is availble, set the bus as idle

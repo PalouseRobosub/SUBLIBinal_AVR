@@ -1,3 +1,4 @@
 cd ../
 mkdir lbr
-zip ./lbr/SUBLIBinal include/* src/*
+rm lbr/SUBLIBinal.zip
+zip -jr lbr/SUBLIBinal . -i *.c *.h

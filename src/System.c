@@ -23,7 +23,7 @@
 
 void disable_Interrupts()
 {
-	dei();
+	cli();
 }
 
 void enable_Interrupts()

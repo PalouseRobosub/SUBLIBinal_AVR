@@ -16,7 +16,7 @@ extern "C" {
 #include "Queue.h"
 
 	/*Enums*/
-	typedef struct SPI_CLK_DIV {
+	typedef enum SPI_CLK_DIV {
 		Div_4 = 0,
 		Div_16 = 1,
 		Div_64 = 0b010,
@@ -30,7 +30,7 @@ extern "C" {
     typedef struct SPI_DATA {
         Queue Rx_queue;///< Received data
         Queue Tx_queue;///< Data that needs to be sent
-        boolean is_idle;///< Idle information
+        Boolean is_idle;///< Idle information
     } SPI_Data;///< Object for references to the data queues
 
     typedef struct SPI_CONFIG {
@@ -43,7 +43,7 @@ extern "C" {
         uint8 *rx_buffer_ptr; ///< Pointer to the receive buffer queue
         uint rx_buffer_size; ///< Size of the receive buffer
         void (*rx_callback); ///< Function to call when data is received
-        boolean enable; ///< Enable SPI
+        Boolean enable; ///< Enable SPI
     }SPI_Config; ///< Configuration struct for initializing an SPI channel
 
     /**
@@ -62,7 +62,7 @@ extern "C" {
      * \return Error type
      * \see Error
      */
-    Error send_SPI(SPI_Channel channel, uint8 *data_ptr, uint data_size);
+    Error send_SPI(uint8 *data_ptr, uint data_size);
 
     //int receive_SPI(SPI_Channel channel, uint8 *data_ptr, uint data_size);
 

@@ -26,6 +26,8 @@
 extern "C" {
 #endif
 
+#include "Arduino.h"
+
 #include "ADC.h"
 #include "ExtInterrupts.h"
 //#include "I2C.h"
@@ -35,7 +37,7 @@ extern "C" {
 #include "System.h"
 #include "Timer.h"
 #include "UART.h"
-#include "packetizer.h"
+#include "Packetizer.h"
 #include "PWM.h"
 
 #ifdef	__cplusplus

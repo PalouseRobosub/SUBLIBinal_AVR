@@ -27,7 +27,7 @@ void (*ADC_callback) (void);
 //channel data structures
 ADC_Data adc_data;
 
-boolean ADC_startup;
+Boolean ADC_startup;
 
 ADC_Data* initialize_ADC(ADC_Config config) {
 
@@ -81,7 +81,7 @@ ISR(ADC_vect) {
     static ADC_Node current_node;
 
     if (ADC_startup == FALSE) { //if there is data in the ADC buffer
-        current_node.data = ADC1BUF0;
+        current_node.data = ADCH << 8 | ADCL;
         enqueue(&(adc_data.Results_queue), (uint8*) & current_node, sizeof(current_node));
     }
 
