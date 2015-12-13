@@ -30,7 +30,7 @@ extern "C" {
 #include "ExtInterrupts.h"
 //#include "I2C.h"
 #include "Queue.h"
-//#include "SPI.h"
+#include "SPI.h"
 //#include "Sensor.h"
 #include "System.h"
 #include "Timer.h"
