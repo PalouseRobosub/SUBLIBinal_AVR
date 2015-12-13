@@ -1,38 +1,61 @@
-/*
- * System.h
- *
- * Created: 11/25/2015 2:52:15 PM
- *  Author: james
- */ 
+/*!
+ * \file System.h
+ * The main include header for the library
+ */
+
+#ifndef SYSTEM_H
+#define	SYSTEM_H
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
 
-#ifndef SYSTEM_H_
-#define SYSTEM_H_
+/* Includes */
+#include "attribs.h"
+#include "pic32mx250f128b.h"
+    
+#ifndef NULL
+    #define NULL 0
+#endif
 
-#include <avr/io.h>
-#include <inttypes.h>
-#include <avr/interrupt.h>
+/* Type Defintions*/
+    typedef unsigned int uint; ///< An unsigned 32-bit integer
+    typedef unsigned short int uint16; ///< An unsigned 16-bit integer
+    typedef unsigned char uint8; ///< An unsigned 8-bit integer
+    typedef signed char sint8; ///< A signed 8-bit integer
 
-#define NULL (0)
+    typedef uint u32;
+    typedef uint16 u16;
+    typedef uint8 u8;
 
-typedef enum
-{
-	FALSE,
-	TRUE
-}bool;
+    typedef enum {
+        FALSE,
+        TRUE
+    } boolean;
+    
+    /// \enum Error Defines the possible communcation errors
+    typedef enum {
+        ERR_NO_ERR, //not an error
+        ERR_INVALID_ENUM, //invalid enumeration supplied to function
+        //Timer Errors
+        ERR_TIMER_FREQ_UNATTAINABLE,
+        ERR_INVALID_DIVIDER,
+        ERR_INVALID_PERIOD,
+                
+                
+        ERR_INVALID_SEND,
+        ERR_QUEUE_FULL, //queue is full
+        ERR_QUEUE_INVALID_READ,
+        ERR_INVALID_CHANNEL //invalid channel
+    }Error;
+    
+    void disable_Interrupts();
+    void enable_Interrupts();
 
-typedef enum
-{
-	ERR_NO_ERR, //not an error
-	
-	//queue errors
-	ERR_QUEUE_INSUF_ROOM,
-	ERR_QUEUE_INSUF_DATA,
-	
-	//general errors
-	ERR_BAD_CONFIG
-}Error;
+#ifdef	__cplusplus
+}
+#endif
 
+#endif	/* SYSTEM_H */
 
-
-#endif /* SYSTEM_H_ */
