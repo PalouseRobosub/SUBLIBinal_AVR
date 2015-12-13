@@ -1,0 +1,121 @@
+#include "PWM.h"
+#include "Timer.h"
+
+
+//Copyright 2015 Palouse RoboSub Club
+
+/*
+  This file is part of Sublibinal.
+
+    Sublibinal is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Sublibinal is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Sublibinal.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+    void initialize_PWM(PWM_Config config) {
+    	switch (config.channel)
+		{
+			case PWM_CH_1:
+				//configure the output pin
+				//PD5
+				DDRD |= 1<<5;
+
+				//enable PWM on the timer in timer configuration
+				TCCR0A |= 1<<COM0B1;
+				TCCR0A &= ~(1<<COM0B0); // using OCOB
+				TCCR0A |= 0b11;
+				TCCR0B |= 1<<WGM02; //set fast PWM m0de with TOP OCR0A
+				OCR0B = config.dutyCycle*OCR0A; //set the duty cycle
+				break;
+			case PWM_CH_2:
+				//Configure Pin PB2
+				DRRB |= 1<<2;
+
+				//enable PWM on the timer in configuration
+				TCCR1A |= 0b11;
+				TCCR1A |= 1<<COM1B1;
+				TCCR1A &= ~(1<<COM1B0);
+				TCCR1B |= 0b11<<3; //enable PWM fast mode, top at OCR1A
+				OCR1B = config.DutyCycle*OCR1A;
+				break;
+			case PWM_CH_3:
+				//Configure PD3
+				DDRD |= 1<<3;
+
+				//Configure PWM in the timer configuration
+				TCCR2A |= 1<<COM2B1;
+				TCCR2A &= ~(1<<COM2B0); //Set mode to PWM fast, non inverted
+				TCCR2A |= 0b11;
+				TCCR2B |= 1<<WMG22; //PWM mode, fast, top at OCR2A
+				OCR2B = config.dutyCycle*OCR2A; //set the duty cycle
+				break;
+		}
+	
+	}
+    
+    void enable_PWM(PWM_Channel channel) {
+        switch (channel) {
+            case PWM_CH_1:
+                TCCR0A |= 1<<WGM01;
+				TCCR0A |= 1<<WGM00;
+				TCCR0B |= 1<<WMG02;
+                break;
+            case PWM_CH_2:
+                TCCR1A |= 1<<WGM10;
+				TCCR1A |= 1<<WGM11;
+				TCCR1B |= 1<<WGM12;
+				TCCR1B |= 1<<WGM13;
+                break;
+            case PWM_CH_3:
+                TCCR2A |= 1<<WGM20;
+				TCCR2A |= 1<<WGM21;
+				TCCR2B |= 1<<WGM22;
+				break;
+        }
+    }
+    
+    void disable_PWM(PWM_Channel channel) {
+         switch (channel) {
+            case PWM_CH_1:
+                TCCR0A &= ~(1<<WGM01);
+				TCCR0A &= ~(1<<WGM00);
+				TCCR0B &= ~(1<<WMG02);
+                break;
+            case PWM_CH_2:
+                TCCR1A &= ~(1<<WGM10);
+				TCCR1A &= ~(1<<WGM11);
+				TCCR1B &= ~(1<<WGM12);
+				TCCR1B &= ~(1<<WGM13);
+                break;
+            case PWM_CH_3:
+                TCCR2A &= ~(1<<WGM20);
+				TCCR2A &= ~(1<<WGM21);
+				TCCR2B &= ~(1<<WGM22);
+				break;
+        }
+    }
+    
+    void update_PWM(PWM_Config config, float dutyCycle) {
+        //update the duty cycle of the respective PWM
+        switch (config.channel) {
+            case PWM_CH_1:
+              	OCR0B = dutyCycle*OCR0A; 
+                break;
+            case PWM_CH_2:
+              	OCR1B = dutyCycle*OCR1A; 
+            	break;
+			case PWM_CH_3:
+              	OCR2B = dutyCycle*OCR2A; 
+                break;
+        }
+    }
