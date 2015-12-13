@@ -1,0 +1,3 @@
+cd ../
+mkdir lbr
+zip ./lbr/SUBLIBinal include/* src/*
