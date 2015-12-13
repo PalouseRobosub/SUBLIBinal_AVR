@@ -35,8 +35,8 @@ extern "C" {
     
     typedef struct INTERRUPT_CONFIG{
         Interrupt extInt;
-        Pin pin;
-        Polarity polarity;
+        char pins;
+		Polarity polarity;
         int enable;
         Resistor resistor;
         void *callback;
