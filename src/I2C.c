@@ -8,7 +8,8 @@
 #include "I2C.h"
 
 //callback functions
-void (*I2C_1_callback) (void);
+void (*I2C_callback) (void);
+void (*I2C_error_callback) (uint8_t status_reg, uint8_t control_reg);
 
 I2C_Data i2c_data;
 	
@@ -22,7 +23,8 @@ Error initialize_I2C(I2C_Config config)
 	i2c_data.rx_queue = create_queue(config.rx_buffer_ptr, config.rx_buffer_size);
 	i2c_data.tx_queue = create_queue(config.tx_buffer_ptr, config.tx_buffer_size);
 
-	I2C_1_callback = config.callback; //link the callback function
+	I2C_callback = config.callback; //link the callback function
+	I2C_error_callback = NULL; //set callback to NULL for now, later this should go in the config structure
 
 	i2c_data.tx_is_idle = TRUE; //set the I2C state machine to idling
 
@@ -126,8 +128,63 @@ ISR(TWI_vect)
 						TWCR |= (1 << TWINT) | (1 <<TWSTO); //send the stop bit
 						i2c_data.tx_is_idle = TRUE; //flag that the bus is idle
 					}
+					else //there is a new transaction to start
+					{
+						TWCR |=  (1 << TWINT) | (1 <<TWSTA); //send restart signal
+					}
 				}
 			}
+			
+			++data_index;
+			break;
+			
+		case I2C_MR_DATA_ACK: //we've received data
+			current_node.data_buffer[data_index] = TWDR; //get the data
+			++data_index;
+			if(data_index != current_node.data_size) //this is not the last byte, send ACK
+			{
+				TWCR |= (1 << TWINT) | (1 << TWEA);
+			}
+			else //last byte, send NACK
+			{
+				TWCR &= ~(1 << TWEA); //clear the ACK bit
+				TWCR |= (1 << TWINT); 
+			}
+			break;
+		
+		case I2C_MR_DATA_NACK: //we've received the last byte of the transaction
+			current_node.data_buffer[data_index] = TWDR; //get the data
+			enqueue(&(i2c_data.rx_queue), (uint8_t*) & current_node, sizeof(current_node)); //load the node into the received queue
+			if(dequeue(&(i2c_data.tx_queue), (uint8_t*) & current_node, sizeof (current_node))) //try to load next node from the tx queue
+			{
+				//there is no work to do right now, queue is empty
+				TWCR |= (1 << TWINT) | (1 << TWSTO); //send stop bit
+				i2c_data.tx_is_idle = TRUE; //flag that the bus is idle (nothing in the send queue)
+			}
+			else //there is data in the queue, new transaction to start
+			{
+				TWCR |= (1 << TWINT) | (1 <<TWSTA); //send restart signal				
+			}
+			break;
+			
+		case I2C_BUSY: //bus is busy, we shouldn't have entered ISR
+			//it is an error to get here, put in error reporting?
+			break;
+		
+		default: //unhandled status code occurred
+			if(I2C_error_callback != NULL)
+			{
+				I2C_error_callback(TWSR, TWCR); //call error callback
+			}
+			TWCR |= (1 << TWINT) | (1 << TWSTO); //send the stop signal to clear the bus
+			i2c_data.tx_is_idle = FALSE;
+			sub_addr_sent = FALSE;
+			break;
+	}
+	
+	if (I2C_callback != NULL)
+	{
+		I2C_callback(); //call callback
 	}
 	
 }
