@@ -10,11 +10,23 @@
 extern "C" {
 #endif
 
+
+//If the type is not defined as arduino, we are compiling for AVR studio. Include the necessary files
+#ifndef _ARDUINO
+	#include <avr/io.h>
+	#include <inttypes.h>
+	#include <avr/interrupt.h>
+#endif
+
 #ifndef NULL
     #define NULL 0
 #endif
 
-#include "Arduino.h"
+
+//To compile the library for Arduino, define _ARDUINO in the source code before you compile
+#ifdef _ARDUINO
+	#include "Arduino.h"
+#endif
 
 /* Type Defintions*/
     typedef unsigned long uint; ///< An unsigned 32-bit integer

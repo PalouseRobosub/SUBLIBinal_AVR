@@ -26,7 +26,9 @@
 extern "C" {
 #endif
 
-#include "Arduino.h"
+
+//#define _ARDUINO /*Uncomment this define if you are compiling the program for ARDUINO*/
+#include "System.h"
 
 #include "ADC.h"
 #include "ExtInterrupts.h"
@@ -34,7 +36,6 @@ extern "C" {
 #include "Queue.h"
 #include "SPI.h"
 //#include "Sensor.h"
-#include "System.h"
 #include "Timer.h"
 #include "UART.h"
 #include "Packetizer.h"
