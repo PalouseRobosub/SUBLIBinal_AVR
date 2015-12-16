@@ -12,7 +12,6 @@
 extern "C" {
 #endif
     
-#include "Arduino.h"
 #include "System.h"
 
     typedef enum {
