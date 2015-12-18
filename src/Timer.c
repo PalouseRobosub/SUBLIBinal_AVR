@@ -18,32 +18,37 @@ Error initialize_timer(Timer_Config config) {
 	switch(config.which_timer)
 	{
 		case TIMER_0:
+		
+			//clear arduino configurations
+			TCCR0A = 0;
+			TIMSK0 = 0;
+		
 			TCCR0B &= ~((1 << CS02)|(1 << CS01)|(1 << CS00)); //clear the clk prescaler bits
 			//figure out the prescaler, set the period register
-			if(config.frequency > (float)config.pbclk/(UINT8_MAX))
+			if(config.frequency > (float)config.pbclk/((long)255))
 			{
 				TCCR0B |= (1 << CS00);
 				period = config.pbclk/(config.frequency*1);
 			}
-			else if(config.frequency > (float)config.pbclk/(UINT8_MAX*8))
+			else if(config.frequency > (float)config.pbclk/((long)255*8))
 			{
 				TCCR0B |= (1 << CS01);
 				period = config.pbclk/(config.frequency*8);
 			}
-			else if(config.frequency > (float)config.pbclk/(UINT8_MAX*64))
+			else if(config.frequency > (float)config.pbclk/((long)255*64))
 			{
 				TCCR0B |= (1 << CS01)|(1 << CS00);
 				period = config.pbclk/(config.frequency*64);
 			}
-			else if(config.frequency > (float)config.pbclk/(UINT8_MAX*256))
+			else if(config.frequency > (float)config.pbclk/((long)255*256))
 			{
 				TCCR0B |= (1 << CS02);
 				period = config.pbclk/(config.frequency*256);
 			}
-			else if(config.frequency > (float)config.pbclk/(UINT8_MAX*1024))
+			else if(config.frequency > (float)config.pbclk/((long)255*1024))
 			{
 				TCCR0B |= (1 << CS02)|(1 << CS00);
-				period = config.pbclk/(config.frequency*1);
+				period = config.pbclk/(config.frequency*1024);
 			}
 			else
 			{
@@ -58,7 +63,7 @@ Error initialize_timer(Timer_Config config) {
 
 			if (config.callback != NULL) {			
 				//setup interrupts
-				TIMSK0 = (1 << OCIE0A);
+				TIMSK0 |= (1 << OCIE0A);
 				timer_0_callback = config.callback;
 			}
 			
