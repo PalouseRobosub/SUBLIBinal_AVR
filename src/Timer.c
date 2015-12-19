@@ -11,7 +11,7 @@ void (*timer_0_callback) (void);
 void (*timer_1_callback) (void);
 void (*timer_2_callback) (void);
 
-Error initialize_timer(Timer_Config config) {
+Error initialize_Timer(Timer_Config config) {
 	Error return_code = ERR_NO_ERR;
 	uint16_t period;
 	
@@ -190,6 +190,45 @@ Error initialize_timer(Timer_Config config) {
 	return return_code;
 }
 
+Error enable_Timer(Timer_Type which_timer)
+{
+	switch (which_timer)
+	{
+		case TIMER_0:
+			TCCR0A |= 1<<WGM01;
+			break;
+		case TIMER_1:
+			TCCR1B |= 1<<WGM12;
+			break;
+		case TIMER_2:
+			TCCR2A |= 1<<WGM21;
+			break;
+	}
+}
+Error disable_Timer(Timer_Type which_timer)
+{
+	switch (which_timer)
+	{
+		case TIMER_0:
+			TCCR0A &= ~(1<<WGM00);
+			TCCR0A &= ~(1<<WGM01);
+			TCCR0B &= ~(1<<WGM02);
+			break;
+		case TIMER_1:
+			TCCR1A &= ~(1<<WGM10);
+			TCCR1A &= ~(1<<WGM11);
+			TCCR1B &= ~(1<<WGM12);
+			TCCR1B &= ~(1<<WGM13);
+			break;
+		case TIMER_2:
+			TCCR2A &= ~(1<<WGM20);
+			TCCR2A &= ~(1<<WGM21);
+			TCCR2B &= ~(1<<WGM22);
+			break;
+	}
+	
+}
+
 ISR(TIMER0_COMPA_vect)
 {
 	if (timer_0_callback != NULL)
@@ -213,3 +252,4 @@ ISR(TIMER2_COMPA_vect)
 		timer_2_callback();
 	}
 }
+

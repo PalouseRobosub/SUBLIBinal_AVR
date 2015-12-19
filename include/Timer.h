@@ -29,8 +29,8 @@ typedef struct TIMER_CONFIG
 	uint8_t enabled;
 } Timer_Config;
 
-Error initialize_timer(Timer_Config config);
-Error enable_timer(Timer_Type which_timer);
-Error disable_timer(Timer_Type which_timer);
+Error initialize_Timer(Timer_Config config);
+Error enable_Timer(Timer_Type which_timer);
+Error disable_Timer(Timer_Type which_timer);
 
 #endif /* TIMER_H_ */

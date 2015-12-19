@@ -33,7 +33,7 @@
 				//enable PWM on the timer in timer configuration
 				TCCR0A |= 1<<COM0B1;
 				TCCR0A &= ~(1<<COM0B0); // using OCOB
-				TCCR0A |= 0b11;
+				TCCR0A |= (1 << WGM00) | (1 << WGM01);
 				TCCR0B |= 1<<WGM02; //set fast PWM m0de with TOP OCR0A
 				OCR0B = config.dutyCycle*OCR0A; //set the duty cycle
 				break;
