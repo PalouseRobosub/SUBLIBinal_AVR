@@ -13,7 +13,7 @@ void initialize_packetizer(Packetizer_Config config)
 {
 	switch (config.which_channel)
 	{
-		case PACKET_CH_UART_1:
+		case PACKET_UART_CH_1:
 			packetizer_u1_data.control_byte = config.control_byte;
 			packetizer_u1_data.receive_callback = config.callback;
 			initialize_UART(config.uart_config);
@@ -25,7 +25,7 @@ void send_packet(Data_Channel which_channel, uint8_t* data, uint8_t data_size)
 {
 	  switch (which_channel) 
 	  {
-		  case PACKET_CH_UART_1:
+		  case PACKET_UART_CH_1:
 		  send_UART(&(packetizer_u1_data.control_byte), 1); //load control byte
 		  send_UART(&(data_size), 1); //load size of packet
 		  send_UART(data, data_size); //load packet data
@@ -54,7 +54,7 @@ void bg_process_packetizer(Data_Channel which_channel)
 	//get one byte and setup the variables
 	switch (which_channel) 
 	{
-		case PACKET_CH_UART_1:
+		case PACKET_UART_CH_1:
 			status = receive_UART(&current_byte, 1);
 			receive_callback = packetizer_u1_data.receive_callback;
 			control_byte = &packetizer_u1_data.control_byte;

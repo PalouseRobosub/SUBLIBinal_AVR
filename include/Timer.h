@@ -19,12 +19,18 @@ typedef enum
 	
 } Timer_Type;
 
+typedef enum {
+	SIMPLE,
+	PRECISE
+} Timer_Precision;
+
 
 typedef struct TIMER_CONFIG
 {
 	Timer_Type which_timer;
 	uint32_t frequency;
 	uint32_t pbclk;
+	Timer_Precision precision;
 	void (*callback);
 	uint8_t enabled;
 } Timer_Config;

@@ -13,7 +13,7 @@
 #include "UART.h"
 
 typedef enum {
-	PACKET_CH_UART_1
+	PACKET_UART_CH_1
 } Data_Channel;
 
 typedef struct PACKETIZER_DATA {

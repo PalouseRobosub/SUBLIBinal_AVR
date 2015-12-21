@@ -59,6 +59,70 @@
 				TCCR2B |= 1<<WGM22; //PWM mode, fast, top at OCR2A
 				OCR2B = config.dutyCycle*OCR2A; //set the duty cycle
 				break;
+			case PWM_CH_1A_SIMPLE:
+				//Configure the pin
+				DDRD |= 1<<6;
+				if (config.enable == TRUE)
+				{
+					//Configure the timer for FAST PWM WGM=0b011
+					TCCR0A |= (1<<WGM01)|(1<<WGM00);
+					TCCR0B &= ~(1<<WGM02);
+				}
+				
+				//Configure COM0A = 0b10 for noninverting output
+				TCCR0A |= (1<<COM0A1);
+				TCCR0A &= ~(1<<COM0A0);
+				
+				OCR0A = config.dutyCycle*255; //Set the duty cycle
+				break;
+			case PWM_CH_1B_SIMPLE:
+				//Configure the pin
+				DDRD |= 1<<5;
+				if (config.enable == TRUE)
+				{
+					//Configure the timer for FAST PWM WGM=0b011
+					TCCR0A |= (1<<WGM01)|(1<<WGM00);
+					TCCR0B &= ~(1<<WGM02);
+				}
+			
+				//Configure COM0A = 0b10 for noninverting output
+				TCCR0A |= (1<<COM0B1);
+				TCCR0A &= ~(1<<COM0B0);
+			
+				OCR0B = config.dutyCycle*255; //Set the duty cycle
+				break;
+			case PWM_CH_3A_SIMPLE:
+				//Configure the pin
+				DDRB |= 1<<3;
+				if (config.enable == TRUE)
+				{
+					//Configure the timer for FAST PWM WGM=0b011
+					TCCR2A |= (1<<WGM21)|(1<<WGM20);
+					TCCR2B &= ~(1<<WGM22);
+				}
+			
+				//Configure COM0A = 0b10 for noninverting output
+				TCCR2A |= (1<<COM2A1);
+				TCCR2A &= ~(1<<COM2A0);
+			
+				OCR2A = config.dutyCycle*255; //Set the duty cycle
+				break;
+			case PWM_CH_3B_SIMPLE:
+				//Configure the pin
+				DDRD |= 1<<3;
+				if (config.enable == TRUE)
+				{
+					//Configure the timer for FAST PWM WGM=0b011
+					TCCR2A |= (1<<WGM21)|(1<<WGM20);
+					TCCR2B &= ~(1<<WGM22);
+				}
+			
+				//Configure COM0A = 0b10 for noninverting output
+				TCCR2A |= (1<<COM2B1);
+				TCCR2A &= ~(1<<COM2B0);
+			
+				OCR2B = config.dutyCycle*255; //Set the duty cycle
+				break;
 		}
 	
 	}
@@ -81,12 +145,32 @@
 				TCCR2A |= 1<<WGM21;
 				TCCR2B |= 1<<WGM22;
 				break;
+			case PWM_CH_1A_SIMPLE:
+				TCCR0A |= 1<<WGM01;
+				TCCR0A |= 1<<WGM00;
+				TCCR0B &= ~(1<<WGM02);
+				break;
+			case PWM_CH_1B_SIMPLE:
+				TCCR0A |= 1<<WGM01;
+				TCCR0A |= 1<<WGM00;
+				TCCR0B &= ~(1<<WGM02);
+				break;
+			case PWM_CH_3A_SIMPLE:
+				TCCR2A |= 1<<WGM21;
+				TCCR2A |= 1<<WGM20;
+				TCCR2B &= ~(1<<WGM22);
+			break;
+			case PWM_CH_3B_SIMPLE:
+				TCCR2A |= 1<<WGM21;
+				TCCR2A |= 1<<WGM20;
+				TCCR2B &= ~(1<<WGM22);
+			break;
         }
     }
     
     void disable_PWM(PWM_Channel channel) {
          switch (channel) {
-            case PWM_CH_1:
+            case PWM_CH_1: case PWM_CH_1A_SIMPLE: case PWM_CH_1B_SIMPLE:
                 TCCR0A &= ~(1<<WGM01);
 				TCCR0A &= ~(1<<WGM00);
 				TCCR0B &= ~(1<<WGM02);
@@ -97,7 +181,7 @@
 				TCCR1B &= ~(1<<WGM12);
 				TCCR1B &= ~(1<<WGM13);
                 break;
-            case PWM_CH_3:
+            case PWM_CH_3: case PWM_CH_3A_SIMPLE: case PWM_CH_3B_SIMPLE:
                 TCCR2A &= ~(1<<WGM20);
 				TCCR2A &= ~(1<<WGM21);
 				TCCR2B &= ~(1<<WGM22);
@@ -110,6 +194,12 @@
         switch (config.channel) {
             case PWM_CH_1:
               	OCR0B = dutyCycle*OCR0A; 
+                break;  
+			case PWM_CH_1A_SIMPLE:
+                OCR0A = dutyCycle*255;
+                break;
+            case PWM_CH_1B_SIMPLE:
+                OCR0B = dutyCycle*255;
                 break;
             case PWM_CH_2:
               	OCR1B = dutyCycle*OCR1A; 
@@ -117,5 +207,12 @@
 			case PWM_CH_3:
               	OCR2B = dutyCycle*OCR2A; 
                 break;
+            case PWM_CH_3A_SIMPLE:
+                OCR2A = dutyCycle*255;
+                break;
+            case PWM_CH_3B_SIMPLE:
+                OCR2B = dutyCycle*255;
+                break;
+                
         }
     }

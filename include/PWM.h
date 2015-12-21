@@ -17,8 +17,12 @@ extern "C" {
     
     typedef enum {
         PWM_CH_1, //Uses Pin PD5
+		PWM_CH_1A_SIMPLE,
+		PWM_CH_1B_SIMPLE,
         PWM_CH_2, //Uses Pin PB2
 		PWM_CH_3, //Uses Pin PD3
+		PWM_CH_3A_SIMPLE,
+		PWM_CH_3B_SIMPLE
     }PWM_Channel;
     
     
