@@ -189,9 +189,9 @@
         }
     }
     
-    void update_PWM(PWM_Config config, float dutyCycle) {
+    void update_PWM(PWM_Channel channel, float dutyCycle) {
         //update the duty cycle of the respective PWM
-        switch (config.channel) {
+        switch (channel) {
             case PWM_CH_1:
               	OCR0B = dutyCycle*OCR0A; 
                 break;  

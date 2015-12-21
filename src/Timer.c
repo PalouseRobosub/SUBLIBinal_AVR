@@ -254,18 +254,23 @@ Error initialize_Timer(Timer_Config config) {
 				error_1 = config.pbclk/((double)65535*1) - config.frequency;
 				if (error_1 < 0)
 					error_1 *= -1;
+
 				error_8 = config.pbclk/((double)65535*8) - config.frequency;
 				if (error_8 < 0)
 					error_8 *= -1;
+
 				error_64 = config.pbclk/((double)65535*64) - config.frequency;
 				if (error_64 < 0)
 					error_64 *= -1;
+
 				error_256 = config.pbclk/((double)65535*256) - config.frequency;
 				if (error_256 < 0)
 					error_256 *= -1;
+
 				error_1024 = config.pbclk/((double)65535*1024) - config.frequency;
 				if (error_1024 < 0)
 					error_1024 *= -1;
+
 				if (error_1 < error_8)
 				//div is 1
 				TCCR1B |= 1<<CS10;
