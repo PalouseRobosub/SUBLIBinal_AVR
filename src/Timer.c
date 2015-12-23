@@ -74,7 +74,7 @@ Error initialize_Timer(Timer_Config config) {
 			case TIMER_1:
 				//Clear out the configuration
 				TCCR1A = 0;
-				TCCR0B &= ~((1 << CS12)|(1 << CS11)|(1 << CS10)); //clear the clk prescaler bits
+				TCCR1B &= ~((1 << CS12)|(1 << CS11)|(1 << CS10)); //clear the clk prescaler bits
 				TIMSK1 = 0;
 			
 				//figure out the prescaler, set the period register
@@ -110,10 +110,10 @@ Error initialize_Timer(Timer_Config config) {
 				OCR1A = period;
 			
 				//set mode to CTC (WGM bits are 0100)
-				TCCR0B |= (1 << WGM12);
-				TCCR0B &= ~(1 << WGM13);
-				TCCR0A &= ~(1 << WGM11);
-				TCCR0A &= ~(1 << WGM10);
+				TCCR1B |= (1 << WGM12);
+				TCCR1B &= ~(1 << WGM13);
+				TCCR1A &= ~(1 << WGM11);
+				TCCR1A &= ~(1 << WGM10);
 
 				if (config.callback != NULL) {
 					//setup interrupts
