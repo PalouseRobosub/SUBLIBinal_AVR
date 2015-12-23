@@ -395,7 +395,10 @@ Error enable_Timer(Timer_Type which_timer)
 		case TIMER_2:
 			TCCR2A |= 1<<WGM21;
 			break;
+		default: return ERR_INVALID_CHANNEL;
 	}
+	
+	return ERR_NO_ERR;
 }
 Error disable_Timer(Timer_Type which_timer)
 {
@@ -417,8 +420,10 @@ Error disable_Timer(Timer_Type which_timer)
 			TCCR2A &= ~(1<<WGM21);
 			TCCR2B &= ~(1<<WGM22);
 			break;
+		default: return ERR_INVALID_CHANNEL;
 	}
 	
+	return ERR_NO_ERR;
 }
 
 ISR(TIMER0_COMPA_vect)
