@@ -257,7 +257,9 @@ Error initialize_Timer(Timer_Config config) {
 					TCCR0B |= cs_0;
 			
 				//Set Mode
-				//WGM = 0b000 already done by clearing registers
+				//WGM = 0b011
+				TCCR0A |= 0b11;
+
 				//Set interrupts
 				//setup the interrupt mask
 				if (config.callback != NULL) {
@@ -382,7 +384,9 @@ Error initialize_Timer(Timer_Config config) {
 
 
 				//Set Mode
-				//WGM = 0b000 already done by clearing registers
+				//WGM = 0b011
+				TCCR2A |= 0b11;
+
 				//Set interrupts
 				//setup the interrupt mask
 				if (config.callback != NULL) {
