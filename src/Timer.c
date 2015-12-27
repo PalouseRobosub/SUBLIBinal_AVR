@@ -410,7 +410,7 @@ Error enable_Timer(Timer_Type which_timer)
 	switch (which_timer)
 	{
 		case TIMER_0:
-			TCCR1B |= cs_0;
+			TCCR0B |= cs_0;
 			break;
 		case TIMER_1:
 			TCCR1B |= cs_1;
