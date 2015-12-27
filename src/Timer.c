@@ -27,7 +27,9 @@ Error initialize_Timer(Timer_Config config) {
 				//clear arduino configurations
 				TCCR0A = 0;
 				TIMSK0 = 0;
-		
+				TCCR0B = 0;
+				TCNT0 = 0;
+
 				cs_0 &= ~((1 << CS02)|(1 << CS01)|(1 << CS00)); //clear the clk prescaler bits
 				//figure out the prescaler, set the period register
 				if(config.frequency > (float)config.pbclk/((long)255))
@@ -68,7 +70,6 @@ Error initialize_Timer(Timer_Config config) {
 
 				if (config.enabled == TRUE)
 				{
-					TCCR0B &= ~((1<<CS01)|(1<<CS02)|(1<<CS00));
 					TCCR0B |= cs_0;
 				}
 
@@ -82,9 +83,11 @@ Error initialize_Timer(Timer_Config config) {
 			case TIMER_1:
 				//Clear out the configuration
 				TCCR1A = 0;
-				cs_1 &= ~((1 << CS12)|(1 << CS11)|(1 << CS10)); //clear the clk prescaler bits
+				TCCR1B = 0;
+				TCNT1 = 0;
+				cs_1 = 0; //clear the clk prescaler bits
 				TIMSK1 = 0;
-			
+					
 				//figure out the prescaler, set the period register
 				if(config.frequency > (float)config.pbclk/((long)65535))
 				{
@@ -142,6 +145,7 @@ Error initialize_Timer(Timer_Config config) {
 				TCCR2B = 0;
 				TIMSK2 = 0;
 				cs_2 = 0;
+				TCNT2 = 0;
 
 				//determine the clock divider and prescaler
 				if(config.frequency > (float)config.pbclk/((long)255))
@@ -216,7 +220,7 @@ Error initialize_Timer(Timer_Config config) {
 				TCCR0A = 0;
 				TIMSK0 = 0;
 				TCCR0B = 0;
-
+				TCNT0 = 0;
 				cs_0 = 0;
 
 
@@ -257,8 +261,7 @@ Error initialize_Timer(Timer_Config config) {
 					TCCR0B |= cs_0;
 			
 				//Set Mode
-				//WGM = 0b011
-				TCCR0A |= 0b11;
+				//WGM = 0b000
 
 				//Set interrupts
 				//setup the interrupt mask
@@ -273,7 +276,7 @@ Error initialize_Timer(Timer_Config config) {
 				TCCR1A = 0;
 				TIMSK1 = 0;
 				TCCR1B = 0;
-
+				TCNT1 = 0;
 				cs_1 = 0;
 
 				//Find the best divider
@@ -331,7 +334,7 @@ Error initialize_Timer(Timer_Config config) {
 				TCCR2A = 0;
 				TIMSK2 = 0;
 				TCCR2B = 0;
-
+				TCNT2 = 0;
 				cs_2 = 0;
 
 				//Find the best divider
@@ -384,8 +387,7 @@ Error initialize_Timer(Timer_Config config) {
 
 
 				//Set Mode
-				//WGM = 0b011
-				TCCR2A |= 0b11;
+				//WGM = 0b000
 
 				//Set interrupts
 				//setup the interrupt mask
