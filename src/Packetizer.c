@@ -16,6 +16,7 @@ void initialize_packetizer(Packetizer_Config config)
 		case PACKET_UART_CH_1:
 			packetizer_u1_data.control_byte = config.control_byte;
 			packetizer_u1_data.receive_callback = config.callback;
+			packetizer_u1_data.sync_lock = TRUE;
 			initialize_UART(config.uart_config);
 			break;
 	}
