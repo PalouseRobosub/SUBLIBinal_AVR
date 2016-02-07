@@ -26,8 +26,8 @@ void (*ADC_callback) (void);
 
 //channel data structures
 ADC_Data adc_data;
+static ADC_Node currentNode_Global;
 
-Boolean ADC_startup;
 
 ADC_Data* initialize_ADC(ADC_Config config) {
 
@@ -40,12 +40,12 @@ ADC_Data* initialize_ADC(ADC_Config config) {
     adc_data.is_idle = TRUE; //set the ADC module to idling
 
     //Select the analog inputs to the ADC multiplexers in AD1CHS
-	ADMUX &= ~(1<<REFS1|1<<REFS0); //use AREF pin
+	ADMUX &= ~(1<<REFS1|1<<REFS0|1<<ADLAR) ; //use AREF pin, right adjusted
 
     //set up pins for analog function
     setup_ADC_pins(config.channels);
    
-	ADCSRA = 1<<ADEN | 1 << ADIE; //turn on the ADC and enable the interrupt
+	ADCSRA = 1<<ADEN |(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)| 1 << ADIE; //turn on the ADC and enable the interrupt -> use 128 divider
 	ADCSRB = 0;
 
     return &adc_data;
@@ -54,12 +54,17 @@ ADC_Data* initialize_ADC(ADC_Config config) {
 int read_ADC(ADC_Node node) {
     int status;
     
-    status = enqueue(&(adc_data.Work_queue), (uint8*) & node, sizeof (node));
 
     //if the bus is idling, force-start it
-    if (adc_data.is_idle) {
-        ADCSRA |= 1<<ADIF; //set the interrupt flag
-    }
+    if (adc_data.is_idle) 
+	{	
+		currentNode_Global = node;
+        adc_data.is_idle = FALSE; //flag that the bus is working now
+		ADMUX = (ADMUX & ~(0b1111)) | currentNode_Global.channel; //set the AD MUX to the input channel of this sample
+		ADCSRA |= 1<<ADSC; //force start the ADC
+	}
+	else
+    	status = enqueue(&(adc_data.Work_queue), (uint8*) & node, sizeof (node));
 
 
     return status;
@@ -78,23 +83,26 @@ void bg_process_ADC(void) {
 }
 
 ISR(ADC_vect) {
-    static ADC_Node current_node;
+	//Debug code
+	DDRB |= 1<<4;
 
-    if (ADC_startup == FALSE) { //if there is data in the ADC buffer
-        current_node.data = ADCH << 8 | ADCL;
-        enqueue(&(adc_data.Results_queue), (uint8*) & current_node, sizeof(current_node));
-    }
 
-    if (dequeue(&(adc_data.Work_queue), (uint8*) & current_node, sizeof(current_node))) //load next node from the queue
+	if (currentNode_Global.device_id == 0x03)
+		PORTB |= 1<<4;
+	else if (currentNode_Global.device_id == 0x04)
+		PORTB &= ~(1<<4);
+
+    currentNode_Global.data = ADC;
+
+	enqueue(&(adc_data.Results_queue), (uint8*) &currentNode_Global, sizeof(currentNode_Global));
+
+    if (dequeue(&(adc_data.Work_queue), (uint8*) &currentNode_Global, sizeof(currentNode_Global))) //load next node from the queue
     {
         adc_data.is_idle = TRUE; //flag that the bus is idle (nothing in the send queue)
-        ADC_startup = TRUE;
     } else {
         adc_data.is_idle = FALSE; //flag that the bus is working now
-    
-		ADMUX = (ADMUX & ~(0b1111)) | current_node.channel; //set the AD MUX to the input channel of this sample
+		ADMUX = (ADMUX & ~(0b1111)) | currentNode_Global.channel; //set the AD MUX to the input channel of this sample
         ADCSRA |= 1<<ADSC; //force start the ADC
-		ADC_startup = FALSE; //set that this is not the first run
     }
 
     if (ADC_callback != NULL) {
